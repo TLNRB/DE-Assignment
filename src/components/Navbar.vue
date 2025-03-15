@@ -1,8 +1,10 @@
-<script lang="ts"></script>
+<script lang="ts">
+import { RouterLink } from 'vue-router'
+</script>
 
 <template>
   <header>
-    <div class="navbar bg-base-100 shadow-sm">
+    <nav class="navbar bg-base-100 shadow-sm">
       <div class="navbar-start">
         <div class="dropdown">
           <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
@@ -25,38 +27,25 @@
             tabindex="0"
             class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
           >
-            <li><a>Item 1</a></li>
-            <li>
-              <a>Parent</a>
-              <ul class="p-2">
-                <li><a>Submenu 1</a></li>
-                <li><a>Submenu 2</a></li>
-              </ul>
-            </li>
-            <li><a>Item 3</a></li>
+            <li><RouterLink to="/">Home</RouterLink></li>
+            <li><RouterLink to="/games">Games</RouterLink></li>
+            <li><RouterLink to="/admin">Admin</RouterLink></li>
           </ul>
         </div>
-        <a class="btn btn-ghost text-xl">daisyUI</a>
+        <a class="btn btn-ghost text-xl">Games</a>
       </div>
       <div class="navbar-center hidden lg:flex">
         <ul class="menu menu-horizontal px-1">
-          <li><a>Item 1</a></li>
-          <li>
-            <details>
-              <summary>Parent</summary>
-              <ul class="p-2">
-                <li><a>Submenu 1</a></li>
-                <li><a>Submenu 2</a></li>
-              </ul>
-            </details>
-          </li>
-          <li><a>Item 3</a></li>
+          <li><RouterLink to="/">Home</RouterLink></li>
+          <li><RouterLink to="/games">Games</RouterLink></li>
+          <li><RouterLink to="/admin">Admin</RouterLink></li>
         </ul>
       </div>
-      <div class="navbar-end">
-        <a class="btn">Button</a>
+      <div class="navbar-end gap-[.5rem]">
+        <RouterLink to="/auth" class="btn">Login</RouterLink>
+        <RouterLink to="/auth" class="btn">Register</RouterLink>
       </div>
-    </div>
+    </nav>
   </header>
 </template>
 
