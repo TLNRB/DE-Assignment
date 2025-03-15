@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import type { Game, NewGame } from '@/types/types';
 
-export default function useGames() {
+export const useGames = () => {
    const error = ref<string | null>(null);
    const loading = ref<boolean>(false);
    const games = ref<Game[]>([]);
@@ -10,7 +10,7 @@ export default function useGames() {
       loading.value = true;
 
       try {
-         const response = await fetch(`${import.meta.env.API_BASE_URL}/api/games`);
+         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/games`);
 
          if (!response.ok) {
             throw new Error('No data available!');
