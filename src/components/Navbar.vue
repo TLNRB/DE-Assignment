@@ -1,10 +1,12 @@
 <script lang="ts">
 import { RouterLink } from 'vue-router'
+
+import gamepad from '@/src/assets/icons/gamepad.svg'
 </script>
 
 <template>
   <header>
-    <nav class="navbar bg-base-100 shadow-sm">
+    <nav class="navbar bg-base-100 shadow-sm px-[1rem] lg:px-[2rem]">
       <div class="navbar-start">
         <div class="dropdown">
           <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
@@ -32,7 +34,7 @@ import { RouterLink } from 'vue-router'
             <li><RouterLink to="/admin">Admin</RouterLink></li>
           </ul>
         </div>
-        <a class="btn btn-ghost text-xl">Games</a>
+        <a class="btn btn-ghost text-xl">Games API CRUD</a>
       </div>
       <div class="navbar-center hidden lg:flex">
         <ul class="menu menu-horizontal px-1">
