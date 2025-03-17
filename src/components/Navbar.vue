@@ -1,7 +1,8 @@
-<script lang="ts">
+<script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { useUsers } from '@/modules/useUsers'
 
-import gamepad from '@/src/assets/icons/gamepad.svg'
+const { logout } = useUsers()
 </script>
 
 <template>
@@ -46,6 +47,7 @@ import gamepad from '@/src/assets/icons/gamepad.svg'
       <div class="navbar-end gap-[.5rem]">
         <RouterLink to="/login" class="btn">Login</RouterLink>
         <RouterLink to="/register" class="btn">Register</RouterLink>
+        <button class="btn" @click="logout">Logout</button>
       </div>
     </nav>
   </header>
