@@ -11,7 +11,7 @@ export type Game = {
    _createdBy: string,
 }
 
-export type NewGame = Omit<Game, 'id' | '_createdBy'> & { _createdBy: string } // Omit the id and _createdBy fields (createdBy is required) then add the _createdBy field back as an optional field
+export type NewGame = Omit<Game, 'id' | '_createdBy'> & { _createdBy?: string } // Omit the id and _createdBy fields (createdBy is required) then add the _createdBy field back as an optional field
 
 export type User = {
    id: string,
