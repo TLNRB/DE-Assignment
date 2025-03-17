@@ -11,15 +11,7 @@ onMounted(() => {
 
 <template>
   <main class="w-full py-[2rem] px-[1rem] lg:px-[2rem]">
-    <div
-      class="relative flex justify-between items-center gap-[1rem] flex-wrap mb-[2rem] md:justify-center"
-    >
-      <h1 class="text-3xl font-bold text-center">Games</h1>
-      <!-- Add game button -->
-      <button class="btn btn-soft btn-primary border-primary md:absolute md:right-0">
-        Add Game
-      </button>
-    </div>
+    <h1 class="mb-[2rem] text-3xl font-bold text-center">Games</h1>
 
     <!-- Loading spinner -->
     <div v-if="loading" class="flex justify-center items-center">
@@ -86,11 +78,6 @@ onMounted(() => {
           <p class="text-sm text-gray-500">
             Released: {{ new Date(game.releaseDate).toLocaleDateString() }}
           </p>
-          <!-- Card actions -->
-          <div class="card-actions justify-end mt-4">
-            <button class="btn">Edit</button>
-            <button class="btn btn-soft btn-error border-error">Delete</button>
-          </div>
         </div>
       </div>
     </div>
