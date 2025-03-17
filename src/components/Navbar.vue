@@ -44,8 +44,8 @@ import gamepad from '@/src/assets/icons/gamepad.svg'
         </ul>
       </div>
       <div class="navbar-end gap-[.5rem]">
-        <RouterLink to="/auth" class="btn">Login</RouterLink>
-        <RouterLink to="/auth" class="btn">Register</RouterLink>
+        <RouterLink to="/login" class="btn">Login</RouterLink>
+        <RouterLink to="/register" class="btn">Register</RouterLink>
       </div>
     </nav>
   </header>
