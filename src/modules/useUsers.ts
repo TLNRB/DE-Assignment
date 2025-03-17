@@ -7,13 +7,13 @@ export const useUsers = () => {
    const error = ref<string | null>(null);
    const user = ref<User | null>(null);
 
-   const name = ref<string | null>(null);
-   const email = ref<string | null>(null);
-   const password = ref<string | null>(null);
+   const name = ref<string>('');
+   const email = ref<string>('');
+   const password = ref<string>('');
 
    const fetchToken = async (email: string, password: string): Promise<void> => {
       try {
-         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/login`, {
+         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/login`, {
             method: 'POST',
             headers: {
                'Content-Type': 'application/json',
@@ -21,18 +21,17 @@ export const useUsers = () => {
             },
             body: JSON.stringify({ email, password })
          });
-
          if (!response.ok) {
-            throw new Error('Invalid credentials');
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Invalid credentials');
          }
          else {
             const authData = await response.json();
             token.value = authData.data.token;
-            user.value = authData.data.user;
             isLoggedIn.value = true;
 
             localStorage.setItem('token', authData.data.token);
-            localStorage.setItem('userId', authData.data.user.id);
+            localStorage.setItem('userId', authData.data.userId);
 
             console.log('User logged in: ', authData);
             console.log('Token: ', token.value);
