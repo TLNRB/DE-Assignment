@@ -6,7 +6,7 @@ import gamepad from '@/src/assets/icons/gamepad.svg'
 
 <template>
   <header>
-    <nav class="navbar bg-base-100 shadow-sm px-[1rem] lg:px-[2rem]">
+    <nav class="navbar bg-base-100 shadow-sm pl-0 pr-[1rem] lg:pl-[1rem] lg:pr-[2rem]">
       <div class="navbar-start">
         <div class="dropdown">
           <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
