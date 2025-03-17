@@ -2,7 +2,7 @@
 import { RouterLink } from 'vue-router'
 import { useUsers } from '@/modules/useUsers'
 
-const { error, name, email, password, fetchToken } = useUsers()
+const { loading, error, email, password, fetchToken } = useUsers()
 </script>
 
 <template>
@@ -48,8 +48,13 @@ const { error, name, email, password, fetchToken } = useUsers()
       </p>
     </div>
 
+    <!-- Loading spinner -->
+    <div v-if="loading" class="flex justify-center items-center">
+      <span class="loading loading-spinner loading-lg"></span>
+    </div>
+
     <!-- Error display -->
-    <div v-if="error" role="alert" class="alert alert-error alert-soft w-96">
+    <div v-else-if="error" role="alert" class="alert alert-error alert-soft w-96">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="h-6 w-6 shrink-0 stroke-current"

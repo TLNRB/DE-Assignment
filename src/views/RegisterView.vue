@@ -2,7 +2,7 @@
 import { RouterLink } from 'vue-router'
 import { useUsers } from '@/modules/useUsers'
 
-const { error, name, email, password, fetchToken } = useUsers()
+const { loading, error, name, email, password, registerUser, logout } = useUsers()
 </script>
 
 <template>
@@ -11,14 +11,14 @@ const { error, name, email, password, fetchToken } = useUsers()
   >
     <div class="card w-96 bg-base-100 shadow-md p-6 mt-[-65px]">
       <h1 class="text-2xl font-bold text-center mb-4">Register</h1>
-      <form class="space-y-4" @submit.prevent="registerUser(email, password)">
+      <form class="space-y-4" @submit.prevent="registerUser(name, email, password)">
         <!-- Name Field -->
         <div>
           <label class="label">
             <span class="label-text">Name</span>
           </label>
           <input
-            type="email"
+            type="text"
             placeholder="Enter your name"
             class="input input-bordered w-full"
             required
@@ -62,8 +62,13 @@ const { error, name, email, password, fetchToken } = useUsers()
       </p>
     </div>
 
+    <!-- Loading spinner -->
+    <div v-if="loading" class="flex justify-center items-center">
+      <span class="loading loading-spinner loading-lg"></span>
+    </div>
+
     <!-- Error display -->
-    <div v-if="error" role="alert" class="alert alert-error alert-soft w-96">
+    <div v-else-if="error" role="alert" class="alert alert-error alert-soft w-96">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="h-6 w-6 shrink-0 stroke-current"
