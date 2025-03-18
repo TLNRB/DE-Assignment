@@ -36,7 +36,7 @@ const { loading, error, name, email, password, registerUser, logout } = useUsers
             placeholder="Enter your email"
             class="input input-bordered w-full"
             required
-            v-model="email"
+            v-model.trim="email"
           />
         </div>
 

@@ -22,7 +22,7 @@ const { loading, error, email, password, fetchToken } = useUsers()
             placeholder="Enter your email"
             class="input input-bordered w-full"
             required
-            v-model="email"
+            v-model.trim="email"
           />
         </div>
 

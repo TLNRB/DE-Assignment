@@ -38,7 +38,7 @@ onMounted(() => {
 
     <!-- Game cards -->
     <div v-else class="flex flex-wrap justify-center gap-6">
-      <div v-for="game in games" :key="game.id" class="card bg-base-100 w-96 shadow-sm mb-4">
+      <div v-for="game in games" :key="game._id" class="card bg-base-100 w-96 shadow-sm mb-4">
         <figure>
           <!-- Image URL -->
           <img :src="game.imageURL" alt="Game Image" />
