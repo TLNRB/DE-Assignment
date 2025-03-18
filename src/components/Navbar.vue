@@ -45,7 +45,7 @@ const { isLoggedIn, logout } = useUsers()
       <div class="navbar-end gap-[.5rem]">
         <RouterLink v-if="!isLoggedIn" to="/login" class="btn">Login</RouterLink>
         <RouterLink v-if="!isLoggedIn" to="/register" class="btn">Register</RouterLink>
-        <button v-if="isLoggedIn" class="btn" @click="logout">Logout</button>
+        <button class="btn" @click="logout">Logout</button>
       </div>
     </nav>
   </header>
