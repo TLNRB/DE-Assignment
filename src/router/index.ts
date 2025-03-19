@@ -15,6 +15,7 @@ const router = createRouter({
     {
       path: '/admin',
       name: 'admin',
+      meta: { requiresAuth: true },
       component: AdminView
     },
     {
@@ -28,6 +29,15 @@ const router = createRouter({
       component: RegisterView
     }
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  const isAuthenticated: boolean = !!localStorage.getItem('token')
+  const requiresAuth: boolean = to.matched.some(record => record.meta.requiresAuth)
+
+  if (requiresAuth && !isAuthenticated) next('/login')
+  else if (isAuthenticated && (to.name === 'login' || to.name === 'register')) next(from.fullPath)
+  else next()
 })
 
 export default router
