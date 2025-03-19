@@ -4,6 +4,7 @@ import type { Game, NewGame } from '@/types/types';
 export const useGames = () => {
    const error = ref<string | null>(null);
    const addError = ref<string | null>(null);
+   const updateError = ref<string | null>(null);
    const loading = ref<boolean>(false);
    const games = ref<Game[]>([]);
 
@@ -39,18 +40,18 @@ export const useGames = () => {
       return { token, userId };
    }
 
-   const validateGame = (game: NewGame, platforms: string[]): void => {
+   const validateGame = (platforms: string[]): void => {
       if (platforms.length === 0) {
          throw new Error('Please select at least one platform!');
       }
    }
 
-   const convertPlatformsArrayToString = (game: NewGame, platforms: string[]): void => {
-      game.platform = platforms.join(', ');
+   const convertPlatformsArrayToString = (platforms: string[]): string => {
+      const platform: string = platforms.join(', ');
+      return platform;
    }
 
    const setDefaultValues = (game: NewGame, platforms: string[], userId: string): NewGame => {
-      convertPlatformsArrayToString(game, platforms);
 
       return {
          title: game.title,
@@ -58,10 +59,30 @@ export const useGames = () => {
          imageURL: 'https://picsum.photos/500/500',
          price: game.price,
          rating: game.rating,
-         platform: game.platform,
+         platform: convertPlatformsArrayToString(platforms),
          genre: game.genre,
          releaseDate: game.releaseDate,
          _createdBy: userId,
+      }
+   }
+
+   const addGameToServer = async (newGame: NewGame, token: string): Promise<void> => {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/games`, {
+         method: 'POST',
+         headers: {
+            'Content-type': 'application/json',
+            'auth-token': token
+         },
+         body: JSON.stringify(newGame)
+      });
+
+      if (!response.ok) {
+         const errorData = await response.json();
+         throw new Error(`Failed to add game! ${errorData.error}`);
+      }
+      else {
+         const game: Game = await response.json();
+         console.log("Game added: ", game);
       }
    }
 
@@ -71,35 +92,59 @@ export const useGames = () => {
       try {
          const { token, userId } = getTokenAndUserId();
 
-         validateGame(game, platforms);
+         validateGame(platforms);
 
          const newGame: NewGame = setDefaultValues(game, platforms, userId);
 
-         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/games`, {
-            method: 'POST',
-            headers: {
-               'Content-type': 'application/json',
-               'auth-token': token
-            },
-            body: JSON.stringify(newGame)
-         });
+         await addGameToServer(newGame, token);
 
-         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(`Failed to add game! ${errorData.error}`);
-         }
-         else {
-            const game: Game = await response.json();
-            games.value.push(game);
-
-            console.log("Game added: ", game);
-
-            await fetchGames();
-         }
+         await fetchGames();
       }
       catch (err) {
          addError.value = (err as Error).message;
          loading.value = false;
+      }
+      finally {
+         loading.value = false;
+      }
+   }
+
+   const updateGameOnServer = async (id: string, updatedGame: Partial<Game>, token: string): Promise<void> => {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/games/${id}`, {
+         method: 'PUT',
+         headers: {
+            'Content-type': 'application/json',
+            'auth-token': token
+         },
+         body: JSON.stringify(updatedGame)
+      });
+
+      if (!response.ok) {
+         const errorData = await response.json();
+         throw new Error(`Failed to update game! ${errorData.error}`);
+      }
+      else {
+         const responseText = await response.text();
+         console.log("Game updated: ", responseText);
+      }
+   }
+
+   const updateGame = async (id: string, updatedGame: Partial<Game>, platforms: string[]): Promise<void> => {
+      loading.value = true
+
+      try {
+         const { token } = getTokenAndUserId();
+
+         validateGame(platforms)
+
+         updatedGame.platform = convertPlatformsArrayToString(platforms);
+
+         await updateGameOnServer(id, updatedGame, token);
+
+         await fetchGames();
+      }
+      catch (err) {
+         updateError.value = (err as Error).message;
       }
       finally {
          loading.value = false;
@@ -120,11 +165,6 @@ export const useGames = () => {
       }
    }
 
-   const removeGameFromState = (id: string): void => {
-      games.value = games.value.filter(game => game._id !== id);
-      console.log("Game deleted by id: ", id);
-   }
-
    const deleteGame = async (id: string): Promise<void> => {
       loading.value = true;
 
@@ -132,7 +172,9 @@ export const useGames = () => {
          const { token } = getTokenAndUserId();
 
          await deleteGameFromServer(id, token);
-         removeGameFromState(id);
+         console.log("Game deleted by id: ", id);
+
+         await fetchGames();
       }
       catch (err) {
          error.value = (err as Error).message;
@@ -142,5 +184,5 @@ export const useGames = () => {
       }
    }
 
-   return { error, addError, loading, games, fetchGames, addGame, deleteGame, getTokenAndUserId };
+   return { error, addError, updateError, loading, games, fetchGames, addGame, updateGame, deleteGame, getTokenAndUserId };
 }
