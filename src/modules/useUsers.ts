@@ -1,10 +1,10 @@
 import { ref } from 'vue'
 import type { User } from '@/types/types'
+import { state } from '@/modules/state'
 
 export const useUsers = () => {
    const loading = ref<boolean>(false);
    const token = ref<string | null>(null);
-   const isLoggedIn = ref<boolean>(false);
    const error = ref<string | null>(null);
    const user = ref<User | null>(null);
 
@@ -30,7 +30,7 @@ export const useUsers = () => {
          else {
             const authData = await response.json();
             token.value = authData.data.token;
-            isLoggedIn.value = true;
+            state.isLoggedIn = true;
 
             localStorage.setItem('token', authData.data.token);
             localStorage.setItem('userId', authData.data.userId);
@@ -41,7 +41,7 @@ export const useUsers = () => {
       }
       catch (err) {
          error.value = (err as Error).message || 'Failed to login';
-         isLoggedIn.value = false;
+         state.isLoggedIn = false;
       }
       finally {
          loading.value = false;
@@ -80,7 +80,7 @@ export const useUsers = () => {
 
    const logout = () => {
       token.value = null;
-      isLoggedIn.value = false;
+      state.isLoggedIn = false;
       localStorage.removeItem('token');
       localStorage.removeItem('userId');
 
@@ -88,5 +88,5 @@ export const useUsers = () => {
 
    }
 
-   return { loading, token, isLoggedIn, error, user, name, email, password, fetchToken, registerUser, logout }
+   return { loading, token, isLoggedIn: state.isLoggedIn, error, user, name, email, password, fetchToken, registerUser, logout }
 }

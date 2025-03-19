@@ -1,8 +1,12 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useUsers } from '@/modules/useUsers'
 
-const { isLoggedIn, logout } = useUsers()
+const { logout } = useUsers()
+import { state } from '@/modules/state'
+
+const isLoggedIn = computed(() => state.isLoggedIn)
 </script>
 
 <template>
@@ -34,18 +38,18 @@ const { isLoggedIn, logout } = useUsers()
             <li><RouterLink to="/admin">Admin</RouterLink></li>
           </ul>
         </div>
-        <a class="btn btn-ghost text-xl">Games API CRUD</a>
+        <RouterLink to="/" class="btn btn-ghost text-xl">Games API CRUD</RouterLink>
       </div>
       <div class="navbar-center hidden lg:flex">
         <ul class="menu menu-horizontal px-1">
           <li><RouterLink to="/">Games</RouterLink></li>
-          <li><RouterLink to="/admin">Admin</RouterLink></li>
+          <li v-if="isLoggedIn"><RouterLink to="/admin">Admin</RouterLink></li>
         </ul>
       </div>
       <div class="navbar-end gap-[.5rem]">
         <RouterLink v-if="!isLoggedIn" to="/login" class="btn">Login</RouterLink>
         <RouterLink v-if="!isLoggedIn" to="/register" class="btn">Register</RouterLink>
-        <button class="btn" @click="logout">Logout</button>
+        <button v-if="isLoggedIn" class="btn" @click="logout">Logout</button>
       </div>
     </nav>
   </header>
