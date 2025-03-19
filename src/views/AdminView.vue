@@ -1,11 +1,21 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
-import type { NewGame } from '@/types/types'
+import { ref, onMounted } from 'vue'
+import type { Game, NewGame } from '@/types/types'
 import { useGames } from '@/modules/useGames'
 
-const { error, addError, loading, games, fetchGames, addGame, deleteGame, getTokenAndUserId } =
-  useGames()
+const {
+  error,
+  addError,
+  updateError,
+  loading,
+  games,
+  fetchGames,
+  addGame,
+  updateGame,
+  deleteGame,
+} = useGames()
 
+//===== DELETE ===== //
 // Delete modal state handling
 const deleteModal = ref<HTMLDialogElement | null>(null)
 const deleteTitle = ref<string | null>(null)
@@ -25,14 +35,14 @@ const handleDeleteGame = async (): Promise<void> => {
   }
 }
 
+//===== ADD ===== //
 // Add modal state handling
-const addGameModal = ref<HTMLDialogElement | null>(null)
-const toggleAddGameModal = (): void => {
+const addModal = ref<HTMLDialogElement | null>(null)
+const toggleAddModal = (): void => {
   clearNewGame()
-  addGameModal.value?.open ? addGameModal.value?.close() : addGameModal.value?.show()
+  addModal.value?.open ? addModal.value?.close() : addModal.value?.show()
 }
 
-// New game state
 const newGamePlatforms = ref<Array<string>>([])
 const newGame = ref<NewGame>({
   title: '',
@@ -47,13 +57,13 @@ const newGame = ref<NewGame>({
 })
 
 // Add new game
-const handleAddGame = async () => {
+const handleAddGame = async (): Promise<void> => {
   addError.value = null
 
   await addGame(newGame.value, newGamePlatforms.value)
 
   if (!addError.value) {
-    toggleAddGameModal()
+    toggleAddModal()
   }
 }
 
@@ -71,6 +81,67 @@ const clearNewGame = (): void => {
     _createdBy: undefined,
   }
   newGamePlatforms.value = []
+  addError.value = null
+}
+
+//===== UPDATE ===== //
+const updatedGamePlatforms = ref<Array<string>>([])
+const updatedGame = ref<Game>({
+  _id: '',
+  title: '',
+  description: '',
+  imageURL: '',
+  price: 0,
+  rating: 0,
+  platform: '',
+  genre: '',
+  releaseDate: '',
+  _createdBy: '',
+})
+
+// Update modal state handling
+const updateModal = ref<HTMLDialogElement | null>(null)
+
+const toggleUpdateModal = (game: Game | null): void => {
+  clearUpdatedGame()
+
+  updateModal.value?.open ? updateModal.value?.close() : updateModal.value?.show()
+
+  if (game) {
+    updatedGame.value = { ...game }
+    updatedGame.value.releaseDate = new Date(game.releaseDate).toISOString().split('T')[0]
+    updatedGamePlatforms.value = game?.platform.split(', ') || []
+  }
+}
+
+// Update game
+const handleUpdateGame = async (): Promise<void> => {
+  updateError.value = null
+
+  const { _id, ...updatedGameData } = updatedGame.value
+  await updateGame(updatedGame.value._id, updatedGameData, updatedGamePlatforms.value)
+
+  if (!updateError.value) {
+    toggleUpdateModal(null)
+  }
+}
+
+// Clear updated game values
+const clearUpdatedGame = (): void => {
+  updatedGame.value = {
+    _id: '',
+    title: '',
+    description: '',
+    imageURL: '',
+    price: 0,
+    rating: 0,
+    platform: '',
+    genre: '',
+    releaseDate: '',
+    _createdBy: '',
+  }
+  updatedGamePlatforms.value = []
+  updateError.value = null
 }
 
 onMounted(() => {
@@ -86,7 +157,7 @@ onMounted(() => {
       <h1 class="text-3xl font-bold text-center">Admin</h1>
       <!-- Add game button -->
       <button
-        @click="toggleAddGameModal"
+        @click="toggleAddModal"
         class="btn btn-soft btn-primary border-primary md:absolute md:right-0"
       >
         Add Game
@@ -160,7 +231,7 @@ onMounted(() => {
           </p>
           <!-- Card actions -->
           <div class="card-actions justify-end mt-4">
-            <button class="btn">Edit</button>
+            <button @click="toggleUpdateModal(game)" class="btn">Edit</button>
             <button
               @click="toggleDeleteModal(game.title, game._id)"
               class="btn btn-soft btn-error border-error"
@@ -173,7 +244,7 @@ onMounted(() => {
     </div>
 
     <!-- Add Game Modal -->
-    <dialog ref="addGameModal" class="modal">
+    <dialog ref="addModal" class="modal">
       <div class="modal-box">
         <h3 class="text-lg font-bold">Add New Game</h3>
         <form @submit.prevent="handleAddGame">
@@ -207,6 +278,7 @@ onMounted(() => {
                 v-model.number="newGame.price"
                 class="input input-md w-full"
                 min="0"
+                step="0.01"
                 required
               />
             </label>
@@ -317,12 +389,169 @@ onMounted(() => {
             <span>{{ addError }}</span>
           </div>
           <div class="modal-action">
-            <button v-if="!loading" type="submit" class="btn btn-primary">Add Game</button>
+            <button v-if="!loading" type="submit" class="btn btn-primary">Add</button>
             <button v-else class="btn btn-primary">
               <span class="loading loading-spinner"></span>
               loading
             </button>
-            <button @click="toggleAddGameModal" type="button" class="btn">Close</button>
+            <button @click="toggleAddModal" type="button" class="btn">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <!-- Update Game Modal -->
+    <dialog ref="updateModal" class="modal">
+      <div class="modal-box">
+        <h3 class="text-lg font-bold">Update {{ updatedGame.title }}</h3>
+        <form @submit.prevent="handleUpdateGame">
+          <div class="py-4 flex flex-col gap-[.5rem]">
+            <label class="w-full">
+              <span class="text-sm">Title</span>
+              <input
+                type="text"
+                placeholder="Title"
+                v-model="updatedGame.title"
+                class="input input-md w-full"
+                required
+              />
+            </label>
+
+            <label class="w-full">
+              <span class="text-sm">Description</span>
+              <textarea
+                v-model="updatedGame.description"
+                placeholder="Description"
+                class="textarea textarea-bordered w-full"
+                required
+              ></textarea>
+            </label>
+
+            <label class="w-full">
+              <span class="text-sm">Price</span>
+              <input
+                type="number"
+                placeholder="Price"
+                v-model.number="updatedGame.price"
+                class="input input-md w-full"
+                min="0"
+                step="0.01"
+                required
+              />
+            </label>
+
+            <label class="w-full">
+              <span class="text-sm">Rating (0-5)</span>
+              <input
+                type="number"
+                placeholder="Rating (0-5)"
+                v-model.number="updatedGame.rating"
+                class="input input-md w-full"
+                min="0"
+                max="5"
+                step="0.1"
+                required
+              />
+            </label>
+
+            <fieldset class="w-full">
+              <span class="text-sm">Platforms</span>
+              <div class="grid grid-cols-2 gap-2">
+                <label class="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    v-model="updatedGamePlatforms"
+                    value="PC"
+                    class="checkbox checkbox-primary"
+                  />
+                  PC
+                </label>
+                <label class="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    v-model="updatedGamePlatforms"
+                    value="PlayStation"
+                    class="checkbox checkbox-primary"
+                  />
+                  PlayStation
+                </label>
+                <label class="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    v-model="updatedGamePlatforms"
+                    value="Xbox"
+                    class="checkbox checkbox-primary"
+                  />
+                  Xbox
+                </label>
+                <label class="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    v-model="updatedGamePlatforms"
+                    value="Nintendo Switch"
+                    class="checkbox checkbox-primary"
+                  />
+                  Nintendo Switch
+                </label>
+                <label class="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    v-model="updatedGamePlatforms"
+                    value="Mobile"
+                    class="checkbox checkbox-primary"
+                  />
+                  Mobile
+                </label>
+              </div>
+            </fieldset>
+
+            <label class="w-full">
+              <span class="text-sm">Genre</span>
+              <input
+                type="text"
+                placeholder="Genre"
+                v-model="updatedGame.genre"
+                class="input input-md w-full"
+                required
+              />
+            </label>
+
+            <label class="w-full">
+              <span class="text-sm">Release Date</span>
+              <input
+                type="date"
+                placeholder="Release Date"
+                v-model="updatedGame.releaseDate"
+                class="input input-md w-full"
+                required
+              />
+            </label>
+          </div>
+
+          <!-- Error display -->
+          <div v-if="updateError" role="alert" class="alert alert-error alert-soft">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 shrink-0 stroke-current"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>{{ updateError }}</span>
+          </div>
+          <div class="modal-action">
+            <button v-if="!loading" type="submit" class="btn btn-primary">Update</button>
+            <button v-else class="btn btn-primary">
+              <span class="loading loading-spinner"></span>
+              loading
+            </button>
+            <button @click="toggleUpdateModal(null)" type="button" class="btn">Cancel</button>
           </div>
         </form>
       </div>
@@ -345,7 +574,7 @@ onMounted(() => {
             <span class="loading loading-spinner"></span>
             loading
           </button>
-          <button @click="toggleDeleteModal(null, null)" class="btn">Close</button>
+          <button @click="toggleDeleteModal(null, null)" class="btn">Cancel</button>
         </div>
       </div>
     </dialog>
