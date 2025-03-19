@@ -3,7 +3,8 @@ import { ref, computed, watch, onMounted } from 'vue'
 import type { NewGame } from '@/types/types'
 import { useGames } from '@/modules/useGames'
 
-const { error, loading, games, fetchGames, addGame, deleteGame, getTokenAndUserId } = useGames()
+const { error, addError, loading, games, fetchGames, addGame, deleteGame, getTokenAndUserId } =
+  useGames()
 
 // Delete modal state handling
 const deleteModal = ref<HTMLDialogElement | null>(null)
@@ -14,8 +15,6 @@ const toggleDeleteModal = (title: string | null, id: string | null): void => {
   deleteModal.value?.open ? deleteModal.value?.close() : deleteModal.value?.show()
   deleteTitle.value = title
   deleteId.value = id
-
-  console.log(deleteTitle.value, deleteId.value)
 }
 
 // Delete game
@@ -47,6 +46,17 @@ const newGame = ref<NewGame>({
   _createdBy: undefined,
 })
 
+// Add new game
+const handleAddGame = async () => {
+  addError.value = null
+
+  await addGame(newGame.value, newGamePlatforms.value)
+
+  if (!addError.value) {
+    toggleAddGameModal()
+  }
+}
+
 // Clear new game form
 const clearNewGame = (): void => {
   newGame.value = {
@@ -61,23 +71,6 @@ const clearNewGame = (): void => {
     _createdBy: undefined,
   }
   newGamePlatforms.value = []
-}
-
-// Add new game
-const addError = ref<string | null>(null)
-
-const handleAddGame = async () => {
-  if (newGamePlatforms.value.length === 0) {
-    addError.value = 'Please select at least one platform'
-  } else {
-    addError.value = null
-
-    const { userId } = getTokenAndUserId()
-    newGame.value._createdBy = userId
-
-    await addGame(newGame.value, newGamePlatforms.value)
-    toggleAddGameModal()
-  }
 }
 
 onMounted(() => {
@@ -213,6 +206,7 @@ onMounted(() => {
                 placeholder="Price"
                 v-model.number="newGame.price"
                 class="input input-md w-full"
+                min="0"
                 required
               />
             </label>
@@ -304,6 +298,7 @@ onMounted(() => {
               />
             </label>
           </div>
+
           <!-- Error display -->
           <div v-if="addError" role="alert" class="alert alert-error alert-soft">
             <svg
@@ -322,7 +317,11 @@ onMounted(() => {
             <span>{{ addError }}</span>
           </div>
           <div class="modal-action">
-            <button type="submit" class="btn btn-primary">Add Game</button>
+            <button v-if="!loading" type="submit" class="btn btn-primary">Add Game</button>
+            <button v-else class="btn btn-primary">
+              <span class="loading loading-spinner"></span>
+              loading
+            </button>
             <button @click="toggleAddGameModal" type="button" class="btn">Close</button>
           </div>
         </form>
@@ -335,8 +334,16 @@ onMounted(() => {
         <h3 class="text-lg font-bold">Delete {{ deleteTitle }}</h3>
         <p class="py-4">Are you sure you want to delete the game {{ deleteTitle }}?</p>
         <div class="modal-action">
-          <button @click="handleDeleteGame" class="btn btn-soft btn-error border-error">
+          <button
+            v-if="!loading"
+            @click="handleDeleteGame"
+            class="btn btn-soft btn-error border-error"
+          >
             Delete
+          </button>
+          <button v-else class="btn btn-soft btn-error border-error">
+            <span class="loading loading-spinner"></span>
+            loading
           </button>
           <button @click="toggleDeleteModal(null, null)" class="btn">Close</button>
         </div>
