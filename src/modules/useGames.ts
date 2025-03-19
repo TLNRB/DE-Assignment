@@ -106,32 +106,33 @@ export const useGames = () => {
       }
    }
 
+   const deleteGameFromServer = async (id: string, token: string): Promise<void> => {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/games/${id}`, {
+         method: 'DELETE',
+         headers: {
+            'auth-token': token
+         }
+      });
+
+      if (!response.ok) {
+         const errorData = await response.json();
+         throw new Error(`Failed to delete game! ${errorData.error}`);
+      }
+   }
+
+   const removeGameFromState = (id: string): void => {
+      games.value = games.value.filter(game => game._id !== id);
+      console.log("Game deleted by id: ", id);
+   }
+
    const deleteGame = async (id: string): Promise<void> => {
       loading.value = true;
 
       try {
-         const token: string | null = localStorage.getItem('token');
+         const { token } = getTokenAndUserId();
 
-         if (!token) {
-            throw new Error('Not authenticated!');
-         }
-         else {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/games/${id}`, {
-               method: 'DELETE',
-               headers: {
-                  'auth-token': token
-               }
-            });
-
-            if (!response.ok) {
-               const errorData = await response.json();
-               throw new Error(`Failed to delete game! ${errorData.error}`);
-            }
-            else {
-               games.value = games.value.filter(game => game._id !== id);
-               console.log("Game deleted by id: ", id);
-            }
-         }
+         await deleteGameFromServer(id, token);
+         removeGameFromState(id);
       }
       catch (err) {
          error.value = (err as Error).message;
