@@ -3,6 +3,7 @@ import type { Game, NewGame } from '@/types/types';
 
 export const useGames = () => {
    const error = ref<string | null>(null);
+   const addError = ref<string | null>(null);
    const loading = ref<boolean>(false);
    const games = ref<Game[]>([]);
 
@@ -38,6 +39,12 @@ export const useGames = () => {
       return { token, userId };
    }
 
+   const validateGame = (game: NewGame, platforms: string[]): void => {
+      if (platforms.length === 0) {
+         throw new Error('Please select at least one platform!');
+      }
+   }
+
    const convertPlatformsArrayToString = (game: NewGame, platforms: string[]): void => {
       game.platform = platforms.join(', ');
    }
@@ -59,8 +66,12 @@ export const useGames = () => {
    }
 
    const addGame = async (game: NewGame, platforms: string[]): Promise<void> => {
+      loading.value = true;
+
       try {
          const { token, userId } = getTokenAndUserId();
+
+         validateGame(game, platforms);
 
          const newGame: NewGame = setDefaultValues(game, platforms, userId);
 
@@ -80,17 +91,24 @@ export const useGames = () => {
          else {
             const game: Game = await response.json();
             games.value.push(game);
+
             console.log("Game added: ", game);
 
             await fetchGames();
          }
       }
       catch (err) {
-         error.value = (err as Error).message;
+         addError.value = (err as Error).message;
+         loading.value = false;
+      }
+      finally {
+         loading.value = false;
       }
    }
 
    const deleteGame = async (id: string): Promise<void> => {
+      loading.value = true;
+
       try {
          const token: string | null = localStorage.getItem('token');
 
@@ -118,7 +136,10 @@ export const useGames = () => {
       catch (err) {
          error.value = (err as Error).message;
       }
+      finally {
+         loading.value = false;
+      }
    }
 
-   return { error, loading, games, fetchGames, addGame, deleteGame, getTokenAndUserId };
+   return { error, addError, loading, games, fetchGames, addGame, deleteGame, getTokenAndUserId };
 }
