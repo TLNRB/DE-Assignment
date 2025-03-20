@@ -1,8 +1,21 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { useUsers } from '@/modules/useUsers'
 
-const { loading, error, name, email, password, registerUser, logout } = useUsers()
+const { loading, error, name, email, password, registerUser } = useUsers()
+
+const router = useRouter()
+
+const handleRegister = async (name: string, email: string, password: string): Promise<void> => {
+  try {
+    const success: boolean = await registerUser(name, email, password)
+
+    if (success) router.push('/login')
+    else throw new Error('Registration failed!')
+  } catch (err) {
+    console.error(err)
+  }
+}
 </script>
 
 <template>
@@ -11,7 +24,7 @@ const { loading, error, name, email, password, registerUser, logout } = useUsers
   >
     <div class="card w-96 bg-base-100 shadow-md p-6 mt-[-65px]">
       <h1 class="text-2xl font-bold text-center mb-4">Register</h1>
-      <form class="space-y-4" @submit.prevent="registerUser(name, email, password)">
+      <form class="space-y-4" @submit.prevent="handleRegister(name, email, password)">
         <!-- Name Field -->
         <div>
           <label class="label">

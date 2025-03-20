@@ -12,7 +12,7 @@ export const useUsers = () => {
    const email = ref<string>('');
    const password = ref<string>('');
 
-   const fetchToken = async (email: string, password: string): Promise<void> => {
+   const fetchToken = async (email: string, password: string): Promise<boolean> => {
       try {
          loading.value = true;
 
@@ -37,18 +37,22 @@ export const useUsers = () => {
 
             console.log('User logged in: ', authData);
             console.log('Token: ', token.value);
+
+            return true;
          }
       }
       catch (err) {
          error.value = (err as Error).message || 'Failed to login';
          state.isLoggedIn = false;
+
+         return false;
       }
       finally {
          loading.value = false;
       }
    }
 
-   const registerUser = async (name: string, email: string, password: string): Promise<void> => {
+   const registerUser = async (name: string, email: string, password: string): Promise<boolean> => {
       try {
          loading.value = true;
 
@@ -68,10 +72,14 @@ export const useUsers = () => {
             const authData = await response.json();
 
             console.log('User registered in: ', authData);
+
+            return true;
          }
       }
       catch (err) {
          error.value = (err as Error).message || 'Failed to register';
+
+         return false;
       }
       finally {
          loading.value = false;
@@ -85,7 +93,6 @@ export const useUsers = () => {
       localStorage.removeItem('userId');
 
       console.log('User logged out');
-
    }
 
    return { loading, token, isLoggedIn: state.isLoggedIn, error, user, name, email, password, fetchToken, registerUser, logout }

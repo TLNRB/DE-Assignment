@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { useUsers } from '@/modules/useUsers'
+import { state } from '@/modules/state'
 
 const { logout } = useUsers()
-import { state } from '@/modules/state'
+
+const router = useRouter()
+
+const handleLogout = () => {
+  logout()
+  router.push('/')
+}
 
 const isLoggedIn = computed(() => state.isLoggedIn)
 </script>
@@ -49,7 +56,7 @@ const isLoggedIn = computed(() => state.isLoggedIn)
       <div class="navbar-end gap-[.5rem]">
         <RouterLink v-if="!isLoggedIn" to="/login" class="btn">Login</RouterLink>
         <RouterLink v-if="!isLoggedIn" to="/register" class="btn">Register</RouterLink>
-        <button v-if="isLoggedIn" class="btn" @click="logout">Logout</button>
+        <button v-if="isLoggedIn" class="btn" @click="handleLogout">Logout</button>
       </div>
     </nav>
   </header>

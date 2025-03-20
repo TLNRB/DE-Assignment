@@ -1,8 +1,21 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { useUsers } from '@/modules/useUsers'
 
 const { loading, error, email, password, fetchToken } = useUsers()
+
+const router = useRouter()
+
+const handleLogin = async (email: string, password: string): Promise<void> => {
+  try {
+    const success: boolean = await fetchToken(email, password)
+
+    if (success) router.push('/admin')
+    else throw new Error('Login failed!')
+  } catch (err) {
+    console.error(err)
+  }
+}
 </script>
 
 <template>
@@ -11,7 +24,7 @@ const { loading, error, email, password, fetchToken } = useUsers()
   >
     <div class="card w-96 bg-base-100 shadow-md p-6 mt-[-65px]">
       <h1 class="text-2xl font-bold text-center mb-4">Login</h1>
-      <form class="space-y-4" @submit.prevent="fetchToken(email, password)">
+      <form class="space-y-4" @submit.prevent="handleLogin(email, password)">
         <!-- Email Field -->
         <div>
           <label class="label">
