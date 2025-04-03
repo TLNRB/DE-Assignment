@@ -4,7 +4,7 @@ import { useGames } from '@/modules/useGames'
 import Searchbar from '@/components/Searchbar.vue'
 import Filter from '@/components/Filter.vue'
 
-const { error, filterMessage, loading, games, fetchGames, filterGamesByPlatform } = useGames()
+const { error, filterMessage, loading, games, fetchGames, filterGamesByPlatform, searchGamesByTitle } = useGames()
 
 onMounted(() => {
   fetchGames()
@@ -16,7 +16,7 @@ onMounted(() => {
     <h1 class="mb-[2rem] text-3xl font-bold text-center">Games</h1>
 
     <div class="w-full flex flex-col justify-center items-center gap-4 mb-8 sm:flex-row sm:flex-wrap">
-      <Searchbar />
+      <Searchbar @search="searchGamesByTitle" @fetch="fetchGames" />
       <Filter @filter="filterGamesByPlatform" @fetch="fetchGames" />
     </div>
 

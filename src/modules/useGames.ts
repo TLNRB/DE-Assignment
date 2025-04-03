@@ -212,5 +212,30 @@ export const useGames = () => {
       }
    }
 
-   return { error, addError, updateError, filterMessage, loading, games, fetchGames, addGame, updateGame, deleteGame, getTokenAndUserId, filterGamesByPlatform };
+   const searchGamesByTitle = async (title: string): Promise<void> => {
+      filterMessage.value = null;
+      loading.value = true;
+
+      try {
+         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/games?title=${title}`);
+
+         if (!response.ok) {
+            const errorText = await response.text();
+            filterMessage.value = errorText;
+            return;
+         }
+
+         const data: Game[] = await response.json();
+         games.value = data;
+         console.log("Games filtered by title: ", games.value);
+      }
+      catch (err) {
+         error.value = (err as Error).message;
+      }
+      finally {
+         loading.value = false;
+      }
+   }
+
+   return { error, addError, updateError, filterMessage, loading, games, fetchGames, addGame, updateGame, deleteGame, getTokenAndUserId, filterGamesByPlatform, searchGamesByTitle };
 }
