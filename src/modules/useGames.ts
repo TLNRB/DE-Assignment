@@ -7,8 +7,10 @@ export const useGames = () => {
    const updateError = ref<string | null>(null);
    const loading = ref<boolean>(false);
    const games = ref<Game[]>([]);
+   const filterMessage = ref<string | null>(null);
 
    const fetchGames = async (): Promise<void> => {
+      filterMessage.value = null;
       loading.value = true;
 
       try {
@@ -184,5 +186,31 @@ export const useGames = () => {
       }
    }
 
-   return { error, addError, updateError, loading, games, fetchGames, addGame, updateGame, deleteGame, getTokenAndUserId };
+   const filterGamesByPlatform = async (platform: string): Promise<void> => {
+      filterMessage.value = null;
+      loading.value = true;
+
+      try {
+         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/games?platform=${platform}`);
+
+         if (!response.ok) {
+            const errorText = await response.text();
+            filterMessage.value = errorText;
+            return;
+         }
+
+         const data: Game[] = await response.json();
+         games.value = data;
+         console.log("Games filtered by platform: ", games.value);
+      }
+      catch (err) {
+         error.value = (err as Error).message;
+
+      }
+      finally {
+         loading.value = false;
+      }
+   }
+
+   return { error, addError, updateError, filterMessage, loading, games, fetchGames, addGame, updateGame, deleteGame, getTokenAndUserId, filterGamesByPlatform };
 }
