@@ -10,6 +10,8 @@ export function gameCreate() {
       await page.fill('input[name="password"]', '123456');
       await page.click('button[type="submit"]');
 
+      await expect(page).toHaveURL('/admin');
+
       // Add a new game
       await page.locator('#addGame').click();
 
@@ -38,6 +40,8 @@ export async function gameEdit() {
       await page.fill('input[name="password"]', '123456');
       await page.click('button[type="submit"]');
 
+      await expect(page).toHaveURL('/admin');
+
       // Edit a game
       await page.locator('.card').last().locator('.card-actions .btn', { hasText: 'Edit' }).click();
 
@@ -57,6 +61,8 @@ export function gameDelete() {
       await page.fill('input[name="email"]', 'e2e_email@email.com');
       await page.fill('input[name="password"]', '123456');
       await page.click('button[type="submit"]');
+
+      await expect(page).toHaveURL('/admin');
 
       // Delete a game
       await page.locator('.card').last().locator('.card-actions .btn', { hasText: 'Delete' }).click();
