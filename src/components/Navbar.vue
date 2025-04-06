@@ -56,7 +56,7 @@ const isLoggedIn = computed(() => state.isLoggedIn)
       <div class="navbar-end gap-[.5rem]">
         <RouterLink v-if="!isLoggedIn" to="/login" class="btn">Login</RouterLink>
         <RouterLink v-if="!isLoggedIn" to="/register" class="btn">Register</RouterLink>
-        <button v-if="isLoggedIn" class="btn" @click="handleLogout">Logout</button>
+        <button v-if="isLoggedIn" class="btn" name="logout" @click="handleLogout">Logout</button>
       </div>
     </nav>
   </header>

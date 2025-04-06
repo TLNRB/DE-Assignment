@@ -159,7 +159,8 @@ onMounted(() => {
     <div class="relative flex justify-between items-center gap-[1rem] flex-wrap mb-[2rem] md:justify-center">
       <h1 class="text-3xl font-bold text-center">Admin</h1>
       <!-- Add game button -->
-      <button @click="toggleAddModal" class="btn btn-soft btn-primary border-primary md:absolute md:right-0">
+      <button id="addGame" @click="toggleAddModal"
+        class="btn btn-soft btn-primary border-primary md:absolute md:right-0">
         Add Game
       </button>
     </div>
@@ -246,24 +247,25 @@ onMounted(() => {
           <div class="py-4 flex flex-col gap-[.5rem]">
             <label class="w-full">
               <span class="text-sm">Title</span>
-              <input type="text" placeholder="Title" v-model="newGame.title" class="input input-md w-full" required />
+              <input type="text" name="title" placeholder="Title" v-model="newGame.title" class="input input-md w-full"
+                required />
             </label>
 
             <label class="w-full">
               <span class="text-sm">Description</span>
-              <textarea v-model="newGame.description" placeholder="Description"
+              <textarea v-model="newGame.description" name="description" placeholder="Description"
                 class="textarea textarea-bordered w-full" required></textarea>
             </label>
 
             <label class="w-full">
               <span class="text-sm">Price</span>
-              <input type="number" placeholder="Price" v-model.number="newGame.price" class="input input-md w-full"
-                min="0" step="0.01" required />
+              <input type="number" name="price" placeholder="Price" v-model.number="newGame.price"
+                class="input input-md w-full" min="0" step="0.01" required />
             </label>
 
             <label class="w-full">
               <span class="text-sm">Rating (0-5)</span>
-              <input type="number" placeholder="Rating (0-5)" v-model.number="newGame.rating"
+              <input type="number" name="rating" placeholder="Rating (0-5)" v-model.number="newGame.rating"
                 class="input input-md w-full" min="0" max="5" step="0.1" required />
             </label>
 
@@ -271,11 +273,12 @@ onMounted(() => {
               <span class="text-sm">Platforms</span>
               <div class="grid grid-cols-2 gap-2">
                 <label class="flex items-center gap-2">
-                  <input type="checkbox" v-model="newGamePlatforms" value="PC" class="checkbox checkbox-primary" />
+                  <input type="checkbox" name="platform_pc" v-model="newGamePlatforms" value="PC"
+                    class="checkbox checkbox-primary" />
                   PC
                 </label>
                 <label class="flex items-center gap-2">
-                  <input type="checkbox" v-model="newGamePlatforms" value="PlayStation"
+                  <input type="checkbox" name="platform_ps" v-model="newGamePlatforms" value="PlayStation"
                     class="checkbox checkbox-primary" />
                   PlayStation
                 </label>
@@ -297,13 +300,14 @@ onMounted(() => {
 
             <label class="w-full">
               <span class="text-sm">Genre</span>
-              <input type="text" placeholder="Genre" v-model="newGame.genre" class="input input-md w-full" required />
+              <input type="text" placeholder="Genre" name="genre" v-model="newGame.genre" class="input input-md w-full"
+                required />
             </label>
 
             <label class="w-full">
               <span class="text-sm">Release Date</span>
-              <input type="date" placeholder="Release Date" v-model="newGame.releaseDate" class="input input-md w-full"
-                required />
+              <input type="date" placeholder="Release Date" name="release_date" v-model="newGame.releaseDate"
+                class="input input-md w-full" required />
             </label>
           </div>
 
@@ -336,25 +340,25 @@ onMounted(() => {
           <div class="py-4 flex flex-col gap-[.5rem]">
             <label class="w-full">
               <span class="text-sm">Title</span>
-              <input type="text" placeholder="Title" v-model="updatedGame.title" class="input input-md w-full"
-                required />
+              <input type="text" name="titleUpdate" placeholder="Title" v-model="updatedGame.title"
+                class="input input-md w-full" required />
             </label>
 
             <label class="w-full">
               <span class="text-sm">Description</span>
-              <textarea v-model="updatedGame.description" placeholder="Description"
+              <textarea v-model="updatedGame.description" placeholder="Description" name="descriptionUpdate"
                 class="textarea textarea-bordered w-full" required></textarea>
             </label>
 
             <label class="w-full">
               <span class="text-sm">Price</span>
-              <input type="number" placeholder="Price" v-model.number="updatedGame.price" class="input input-md w-full"
-                min="0" step="0.01" required />
+              <input type="number" name="priceUpdate" placeholder="Price" v-model.number="updatedGame.price"
+                class="input input-md w-full" min="0" step="0.01" required />
             </label>
 
             <label class="w-full">
               <span class="text-sm">Rating (0-5)</span>
-              <input type="number" placeholder="Rating (0-5)" v-model.number="updatedGame.rating"
+              <input type="number" name="ratingUpdate" placeholder="Rating (0-5)" v-model.number="updatedGame.rating"
                 class="input input-md w-full" min="0" max="5" step="0.1" required />
             </label>
 
@@ -362,11 +366,12 @@ onMounted(() => {
               <span class="text-sm">Platforms</span>
               <div class="grid grid-cols-2 gap-2">
                 <label class="flex items-center gap-2">
-                  <input type="checkbox" v-model="updatedGamePlatforms" value="PC" class="checkbox checkbox-primary" />
+                  <input type="checkbox" name="platform_pcUpdate" v-model="updatedGamePlatforms" value="PC"
+                    class="checkbox checkbox-primary" />
                   PC
                 </label>
                 <label class="flex items-center gap-2">
-                  <input type="checkbox" v-model="updatedGamePlatforms" value="PlayStation"
+                  <input type="checkbox" name="platform_psUpdate" v-model="updatedGamePlatforms" value="PlayStation"
                     class="checkbox checkbox-primary" />
                   PlayStation
                 </label>
@@ -390,13 +395,13 @@ onMounted(() => {
 
             <label class="w-full">
               <span class="text-sm">Genre</span>
-              <input type="text" placeholder="Genre" v-model="updatedGame.genre" class="input input-md w-full"
-                required />
+              <input type="text" name="genreUpdate" placeholder="Genre" v-model="updatedGame.genre"
+                class="input input-md w-full" required />
             </label>
 
             <label class="w-full">
               <span class="text-sm">Release Date</span>
-              <input type="date" placeholder="Release Date" v-model="updatedGame.releaseDate"
+              <input type="date" name="release_dateUpdate" placeholder="Release Date" v-model="updatedGame.releaseDate"
                 class="input input-md w-full" required />
             </label>
           </div>
@@ -411,7 +416,7 @@ onMounted(() => {
             <span>{{ updateError }}</span>
           </div>
           <div class="modal-action">
-            <button v-if="!loading" type="submit" class="btn btn-primary">Update</button>
+            <button v-if="!loading" name="submitUpdate" type="submit" class="btn btn-primary">Update</button>
             <button v-else class="btn btn-primary">
               <span class="loading loading-spinner"></span>
               loading

@@ -24,8 +24,6 @@ export function userResgister() {
 
 export function userLogin() {
    test('User can login', async ({ page }) => {
-      test.setTimeout(10000); // Set timeout to 10 seconds
-
       // Go to login page and fill in the form
       await page.goto('/login');
       await page.fill('input[name="email"]', user.email);
@@ -33,5 +31,22 @@ export function userLogin() {
       await page.click('button[type="submit"]');
 
       await expect(page).toHaveURL('/admin');
+   })
+}
+
+export function userLogout() {
+   test('User can be logged out', async ({ page }) => {
+      // Login the user
+      await page.goto('/login');
+      await page.fill('input[name="email"]', user.email);
+      await page.fill('input[name="password"]', user.password);
+      await page.click('button[type="submit"]');
+
+      await expect(page).toHaveURL('/admin');
+
+      // Logout the user
+      await page.getByRole('button', { name: 'logout' }).click();
+
+      await expect(page).toHaveURL('/');
    })
 }
