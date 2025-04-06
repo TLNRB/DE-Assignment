@@ -9,6 +9,8 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.43.1-jammy
 
     strategy:
       max-parallel: 1
@@ -26,14 +28,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
-
-      - name: Run Playwright tests
-        run: npx playwright test
+      - name: NPM install, and test
+        run: |
+          npm install
+          npm test
         env: 
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
 
