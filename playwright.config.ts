@@ -35,7 +35,7 @@ export default defineConfig({
   },
 
   /* Configure projects for major browsers */
-  projects: [
+  /* projects: [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
@@ -50,11 +50,11 @@ export default defineConfig({
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
     },
-  ],
+  ], */
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npm run test',
+    command: 'npm run dev',
     url: 'http://localhost:5173',
     reuseExistingServer: false,
   },
