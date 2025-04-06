@@ -10,7 +10,7 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.43.1-jammy
+      image: mcr.microsoft.com/playwright:v1.51.1-jammy
 
     strategy:
       max-parallel: 1
