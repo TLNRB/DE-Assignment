@@ -1,10 +1,37 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useGames } from '@/modules/useGames'
 import Searchbar from '@/components/Searchbar.vue'
 import Filter from '@/components/Filter.vue'
 
-const { error, filterMessage, loading, games, fetchGames, filterGamesByPlatform, searchGamesByTitle } = useGames()
+const { error, filterMessage, loading, games, fetchGames, filterGamesByPlatform, filterGamesByGenre, searchGamesByTitle } = useGames()
+
+const filterBy = ref<string>('Search');
+
+const toggleFilter = (filter: string) => {
+  filterBy.value = filter;
+  fetchGames(); // Fetch games when filter changes
+}
+
+const availablePlatforms = ref<string[]>([
+  'PC',
+  'PlayStation',
+  'Xbox',
+  'Nintendo Switch',
+  'Mobile',
+]);
+
+const genres = ref<string[]>([
+  'Action',
+  'Adventure',
+  'RPG',
+  'Simulation',
+  'Strategy',
+  'Sports',
+  'Puzzle',
+  'Horror',
+  'Racing',
+]);
 
 onMounted(() => {
   fetchGames()
@@ -15,9 +42,34 @@ onMounted(() => {
   <main class="w-full py-[2rem] px-[1rem] lg:px-[2rem]">
     <h1 class="mb-[2rem] text-3xl font-bold text-center">Games</h1>
 
+    <!-- Filter Toggle Buttons -->
+    <div class="flex gap-2 justify-center mb-6">
+      <button class="text-sm px-3 py-1.5 rounded-lg text-black border transition font-medium" :class="filterBy === 'Search'
+        ? 'bg-gray-200  border-gray-300'
+        : 'bg-gray-50 border-gray-300 hover:bg-gray-100'" @click="toggleFilter('Search')">
+        Search
+      </button>
+      <button class="text-sm px-3 py-1.5 rounded-lg text-black border transition font-medium" :class="filterBy === 'Platform'
+        ? 'bg-gray-200  border-gray-300'
+        : 'bg-gray-50 border-gray-300 hover:bg-gray-100'" @click="toggleFilter('Platform')">
+        Platform
+      </button>
+      <button class="text-sm px-3 py-1.5 rounded-lg text-black border transition font-medium" :class="filterBy === 'Genre'
+        ? 'bg-gray-200  border-gray-300'
+        : 'bg-gray-50 border-gray-300 hover:bg-gray-100'" @click="toggleFilter('Genre')">
+        Genre
+      </button>
+    </div>
+
+    <!-- Toggle-Based Filters & Search -->
     <div class="w-full flex flex-col justify-center items-center gap-4 mb-8 sm:flex-row sm:flex-wrap">
-      <Searchbar @search="searchGamesByTitle" @fetch="fetchGames" />
-      <Filter @filter="filterGamesByPlatform" @fetch="fetchGames" />
+      <Searchbar v-if="filterBy === 'Search'" @search="searchGamesByTitle" @fetch="fetchGames" />
+
+      <Filter v-if="filterBy === 'Platform'" :filter="availablePlatforms" filterName="Platform"
+        @filter="filterGamesByPlatform" @fetch="fetchGames" />
+
+      <Filter v-if="filterBy === 'Genre'" :filter="genres" filterName="Genre" @filter="filterGamesByGenre"
+        @fetch="fetchGames" />
     </div>
 
     <!-- Filter message -->
@@ -47,7 +99,7 @@ onMounted(() => {
 
     <!-- Game cards -->
     <div v-if="!error && !filterMessage && !loading" class="flex flex-wrap justify-center gap-6">
-      <div v-for="game in games" :key="game._id" class="card bg-base-100 w-96 shadow-sm mb-4">
+      <div v-if="games.length > 0" v-for="game in games" :key="game._id" class="card bg-base-100 w-96 shadow-sm mb-4">
         <figure>
           <!-- Image URL -->
           <img :src="game.imageURL" alt="Game Image" />
@@ -79,6 +131,9 @@ onMounted(() => {
             Released: {{ new Date(game.releaseDate).toLocaleDateString() }}
           </p>
         </div>
+      </div>
+      <div v-else class="w-full text-sm text-center italic text-gray-500">
+        <p>No games found.</p>
       </div>
     </div>
   </main>
