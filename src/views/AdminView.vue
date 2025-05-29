@@ -114,7 +114,18 @@ const toggleUpdateModal = (game: Game | null): void => {
   updateModal.value?.open ? updateModal.value?.close() : updateModal.value?.show()
 
   if (game) {
-    updatedGame.value = { ...game }
+    updatedGame.value = {
+      _id: game._id,
+      title: game.title,
+      description: game.description,
+      imageURL: game.imageURL,
+      price: game.price,
+      rating: game.rating,
+      platform: game.platform,
+      genre: game.genre,
+      releaseDate: game.releaseDate,
+      _createdBy: game._createdBy,
+    }
     updatedGame.value.releaseDate = new Date(game.releaseDate).toISOString().split('T')[0]
     updatedGamePlatforms.value = game?.platform.split(', ') || []
   }

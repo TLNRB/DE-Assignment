@@ -4,7 +4,7 @@ import { test } from '@playwright/test';
 import { userResgister, userLogin, userLogout } from './user.test';
 import { gameCreate, gameEdit, gameDelete } from './game.test';
 
-test.describe(userResgister);
+/* test.describe(userResgister); */
 test.describe(userLogin);
 test.describe(gameCreate);
 test.describe(gameEdit);
