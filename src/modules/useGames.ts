@@ -191,7 +191,7 @@ export const useGames = () => {
       loading.value = true;
 
       try {
-         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/games?platform=${platform}`);
+         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/query/games?field=platform&value=${platform}&populate=false`);
 
          if (!response.ok) {
             const errorText = await response.text();
@@ -212,12 +212,38 @@ export const useGames = () => {
       }
    }
 
+   const filterGamesByGenre = async (genre: string): Promise<void> => {
+      filterMessage.value = null;
+      loading.value = true;
+
+      try {
+         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/query/games?field=genre&value=${genre}&populate=false`);
+
+         if (!response.ok) {
+            const errorText = await response.text();
+            filterMessage.value = errorText;
+            return;
+         }
+
+         const data: Game[] = await response.json();
+         games.value = data;
+         console.log("Games filtered by genre: ", games.value);
+      }
+      catch (err) {
+         error.value = (err as Error).message;
+
+      }
+      finally {
+         loading.value = false;
+      }
+   }
+
    const searchGamesByTitle = async (title: string): Promise<void> => {
       filterMessage.value = null;
       loading.value = true;
 
       try {
-         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/games?title=${title}`);
+         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/query/games?field=title&value=${title}&populate=false`);
 
          if (!response.ok) {
             const errorText = await response.text();
@@ -237,5 +263,5 @@ export const useGames = () => {
       }
    }
 
-   return { error, addError, updateError, filterMessage, loading, games, fetchGames, addGame, updateGame, deleteGame, getTokenAndUserId, filterGamesByPlatform, searchGamesByTitle };
+   return { error, addError, updateError, filterMessage, loading, games, fetchGames, addGame, updateGame, deleteGame, getTokenAndUserId, filterGamesByPlatform, filterGamesByGenre, searchGamesByTitle };
 }

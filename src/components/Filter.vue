@@ -1,39 +1,37 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import type { PropType } from 'vue';
 import { defineEmits } from 'vue';
 
-const selectedPlatform = ref<string>('');
+const props = defineProps({
+   filter: { type: Array as PropType<string[]>, required: true },
+   filterName: { type: String, required: true },
+});
 
-const availablePlatforms = ref<string[]>([
-   'PC',
-   'PlayStation',
-   'Xbox',
-   'Nintendo Switch',
-   'Mobile',
-]);
+const selectedValue = ref<string>(`Select a ${props.filterName}`);
 
 const emit = defineEmits(['filter', 'fetch']);
 
 const filterGames = (event?: Event) => {
-   if (!selectedPlatform.value) emit('fetch');
-   else emit('filter', selectedPlatform.value);
+   if (!selectedValue.value) emit('fetch');
+   else emit('filter', selectedValue.value);
 };
 </script>
 
 <template>
    <div class="flex items-center gap-2 relative w-full sm:w-fit">
-      <div class=" relative w-full sm:w-[200px]">
-         <select id="platform-select" v-model="selectedPlatform" @change="filterGames"
+      <div class=" relative w-fit">
+         <select id="platform-select" v-model="selectedValue" @change="filterGames"
             class="select select-bordered w-full text-black">
-            <option value="Select a platform" disabled selected>Select a platform</option>
-            <option v-for="platform in availablePlatforms" :key="platform" :value="platform">
-               {{ platform }}
+            <option :value="`Select a ${filterName}`" disabled selected>Select a {{ filterName }}</option>
+            <option v-for="item in filter" :key="item" :value="item">
+               {{ item }}
             </option>
          </select>
       </div>
       <!-- Clear filter button -->
-      <button v-if="selectedPlatform" @click="selectedPlatform = ''; filterGames()" class="btn btn-secondary">
-         Clear Filter
+      <button v-if="selectedValue" @click="selectedValue = ''; filterGames()" class="btn btn-secondary">
+         &times;
       </button>
    </div>
 </template>

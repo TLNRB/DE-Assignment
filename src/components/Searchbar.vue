@@ -11,6 +11,10 @@ const onSearchInput = (): void => {
    if (debounceTimer) clearTimeout(debounceTimer);
 
    debounceTimer = setTimeout(() => {
+      if (searchQuery.value.trim() === '') {
+         emit('fetch');
+         return;
+      }
       emit('search', searchQuery.value);
    }, 500);
 }
