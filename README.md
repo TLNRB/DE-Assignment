@@ -1,6 +1,12 @@
 # DE-Assignment
 
-This template should help get you started developing with Vue 3 in Vite.
+API: https://api-project-4z46.onrender.com/api/docs/
+
+Live Site: https://de-assignment-7jnp.onrender.com/
+
+Credentials:
+  - Email: admin@email.com
+  - Password: 123456
 
 ## Recommended IDE Setup
 
