@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 export function gameCreate() {
-   test('Game can be created', async ({ page }) => {
-      test.setTimeout(20000); // Set timeout to 20 seconds
+   test.setTimeout(20000); // Set timeout to 20 seconds
 
+   test('Game can be created', async ({ page }) => {
       // Login the user
       await page.goto('/login');
       await page.fill('input[name="email"]', 'e2e_email@email.com');
@@ -31,9 +31,9 @@ export function gameCreate() {
 }
 
 export async function gameEdit() {
-   test('Game can be edited', async ({ page }) => {
-      test.setTimeout(20000); // Set timeout to 20 seconds
+   test.setTimeout(20000); // Set timeout to 20 seconds
 
+   test('Game can be edited', async ({ page }) => {
       // Login the user
       await page.goto('/login');
       await page.fill('input[name="email"]', 'e2e_email@email.com');
@@ -53,9 +53,9 @@ export async function gameEdit() {
 }
 
 export function gameDelete() {
-   test('Game can be deleted', async ({ page }) => {
-      test.setTimeout(20000); // Set timeout to 20 seconds
+   test.setTimeout(20000); // Set timeout to 20 seconds
 
+   test('Game can be deleted', async ({ page }) => {
       // Login the user
       await page.goto('/login');
       await page.fill('input[name="email"]', 'e2e_email@email.com');
@@ -73,4 +73,38 @@ export function gameDelete() {
    })
 }
 
-//
+export function filterGamesByTitle() {
+   test.setTimeout(20000); // Set timeout to 20 seconds
+
+   test('Games can be filtered by title', async ({ page }) => {
+      await page.goto('/');
+
+      await page.locator('#filter-title').click();
+      await page.fill('input[name="search"]', 'the last');
+      await expect(page.locator('.card').first().locator('.card-title')).toContainText('The Last of Us');
+   })
+}
+
+export function filterGamesByPlatform() {
+   test.setTimeout(20000); // Set timeout to 20 seconds
+
+   test('Games can be filtered by platform', async ({ page }) => {
+      await page.goto('/');
+
+      await page.locator('#filter-platform').click();
+      await page.locator('#platform-select').selectOption({ value: 'PlayStation' });
+      await expect(page.locator('.card').first().locator('.platform')).toContainText('PlayStation');
+   })
+}
+
+export function filterGamesByGenre() {
+   test.setTimeout(20000); // Set timeout to 20 seconds
+
+   test('Games can be filtered by genre', async ({ page }) => {
+      await page.goto('/');
+
+      await page.locator('#filter-genre').click();
+      await page.locator('#genre-select').selectOption({ value: 'RPG' });
+      await expect(page.locator('.card').first().locator('.genre')).toContainText('RPG');
+   })
+}

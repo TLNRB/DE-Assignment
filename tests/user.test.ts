@@ -7,9 +7,9 @@ const user = {
 }
 
 export function userResgister() {
-   test('User can register', async ({ page }) => {
-      test.setTimeout(20000); // Set timeout to 20 seconds
+   test.setTimeout(20000); // Set timeout to 20 seconds
 
+   test('User can register', async ({ page }) => {
       // Go to register page and fill in the form
       await page.goto('/register');
 
