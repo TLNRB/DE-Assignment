@@ -6,6 +6,7 @@ import { defineEmits } from 'vue';
 const props = defineProps({
    filter: { type: Array as PropType<string[]>, required: true },
    filterName: { type: String, required: true },
+   filterNameLower: { type: String, required: true }
 });
 
 const selectedValue = ref<string>(`Select a ${props.filterName}`);
@@ -21,7 +22,7 @@ const filterGames = (event?: Event) => {
 <template>
    <div class="flex items-center gap-2 relative w-full sm:w-fit">
       <div class=" relative w-fit">
-         <select id="platform-select" v-model="selectedValue" @change="filterGames"
+         <select :id="`${filterNameLower}-select`" v-model="selectedValue" @change="filterGames"
             class="select select-bordered w-full text-black">
             <option :value="`Select a ${filterName}`" disabled selected>Select a {{ filterName }}</option>
             <option v-for="item in filter" :key="item" :value="item">

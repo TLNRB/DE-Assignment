@@ -207,17 +207,18 @@ onMounted(() => {
 
     <!-- Filter Toggle Buttons -->
     <div class="flex gap-2 justify-center mb-6">
-      <button class="text-sm px-3 py-1.5 rounded-lg text-black border transition font-medium" :class="filterBy === 'Search'
+      <button id="filter-title" class="text-sm px-3 py-1.5 rounded-lg text-black border transition font-medium" :class="filterBy === 'Search'
         ? 'bg-gray-200  border-gray-300'
         : 'bg-gray-50 border-gray-300 hover:bg-gray-100'" @click="toggleFilter('Search')">
         Search
       </button>
-      <button class="text-sm px-3 py-1.5 rounded-lg text-black border transition font-medium" :class="filterBy === 'Platform'
-        ? 'bg-gray-200  border-gray-300'
-        : 'bg-gray-50 border-gray-300 hover:bg-gray-100'" @click="toggleFilter('Platform')">
+      <button id="filter-platform" class="text-sm px-3 py-1.5 rounded-lg text-black border transition font-medium"
+        :class="filterBy === 'Platform'
+          ? 'bg-gray-200  border-gray-300'
+          : 'bg-gray-50 border-gray-300 hover:bg-gray-100'" @click="toggleFilter('Platform')">
         Platform
       </button>
-      <button class="text-sm px-3 py-1.5 rounded-lg text-black border transition font-medium" :class="filterBy === 'Genre'
+      <button id="filter-genre" class="text-sm px-3 py-1.5 rounded-lg text-black border transition font-medium" :class="filterBy === 'Genre'
         ? 'bg-gray-200  border-gray-300'
         : 'bg-gray-50 border-gray-300 hover:bg-gray-100'" @click="toggleFilter('Genre')">
         Genre
@@ -229,10 +230,10 @@ onMounted(() => {
       <Searchbar v-if="filterBy === 'Search'" @search="searchGamesByTitle" @fetch="fetchGames" />
 
       <Filter v-if="filterBy === 'Platform'" :filter="availablePlatforms" filterName="Platform"
-        @filter="filterGamesByPlatform" @fetch="fetchGames" />
+        filterNameLower="platform" @filter="filterGamesByPlatform" @fetch="fetchGames" />
 
-      <Filter v-if="filterBy === 'Genre'" :filter="genres" filterName="Genre" @filter="filterGamesByGenre"
-        @fetch="fetchGames" />
+      <Filter v-if="filterBy === 'Genre'" :filter="genres" filterName="Genre" filterNameLower="genre"
+        @filter="filterGamesByGenre" @fetch="fetchGames" />
     </div>
 
     <!-- Filter message -->
@@ -274,8 +275,8 @@ onMounted(() => {
           <p>{{ game.description }}</p>
           <!-- Platform and genre -->
           <div class="flex flex-wrap gap-2 mt-2">
-            <span class="badge badge-primary">{{ game.platform }}</span>
-            <span class="badge badge-secondary">{{ game.genre }}</span>
+            <span class="badge badge-primary platform">{{ game.platform }}</span>
+            <span class="badge badge-secondary genre">{{ game.genre }}</span>
           </div>
           <!-- Price and Rating -->
           <div class="mt-2">

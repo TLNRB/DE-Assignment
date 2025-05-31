@@ -28,7 +28,7 @@ const clearSearch = (): void => {
 <template>
    <div class="flex justify-center w-full sm:w-[400px]">
       <div class="relative w-full">
-         <input type="text" placeholder="Search games..." v-model="searchQuery" @input="onSearchInput"
+         <input name="search" type="text" placeholder="Search games..." v-model="searchQuery" @input="onSearchInput"
             class="input input-bordered w-full pl-10" />
          <!-- Search Icon -->
          <svg xmlns="http://www.w3.org/2000/svg"
